@@ -4,6 +4,14 @@ import nltk
 from nltk.corpus import stopwords
 import string
 import pickle
+def textProcessor(featureRecord):
+    removePunctuation = [word for word in featureRecord if word not in string.punctuation]
+    sentences = "".join(removePunctuation)
+    words = sentences.split(" ")
+    wordNormalize = [word.lower() for word in words]
+    finalWords = [word for word in wordNormalize if word not in stopwords.words("english")]
+    return finalWords
+
 app = Flask(__name__)
 model = pickle.load(open('SmsDetectorModel.mdl' , "rb"))
 TfIdfObject = pickle.load(open('TFIDobject.obj','rb'))
@@ -18,13 +26,6 @@ def predict():
     For rendering results on HTML GUI
     '''
     SmsInput = input("Enter SMS: ")
-def textProcessor(featureRecord):
-    removePunctuation = [word for word in featureRecord if word not in string.punctuation]
-    sentences = "".join(removePunctuation)
-    words = sentences.split(" ")
-    wordNormalize = [word.lower() for word in words]
-    finalWords = [word for word in wordNormalize if word not in stopwords.words("english")]
-    return finalWords
     preproccessedtext = textProcessor(SmsInput)
     bowfeatures = PreprocessedText.transform(preproccessedtext)
     tfIdffeature = TfIdfObject.transform(bowfeatures)
